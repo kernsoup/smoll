@@ -7,7 +7,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
 
 
-LAT_STEP = 0.004
+LAT_STEP = 0.008
 LON_STEP = 0.008
 coord_to_geo_x = 0.0000428
 coord_to_geo_y = 0.0000428
@@ -17,10 +17,10 @@ def load_map(mp):
     map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}".format(z=mp.zoom,
                                                                             type=mp.type)
     if mp.search_result:
-        map_request += "&pt={0},{1},pm2rdm".format(mp.lat, mp.lon)
+        map_request += "&pt={0},{1},pm2rdm".format(mp.lon, mp.lat)
     else:
-        map_request += "&ll={ll}".format(ll=mp.ll())
-
+        map_request += "&ll={0},{1}".format(mp.lon, mp.lat)
+    print(map_request)
     response = requests.get(map_request)
     if not response:
         print("Ошибка выполнения запроса:")
@@ -69,8 +69,8 @@ class SearchResult(object):
 class MapParams(object):
     def __init__(self):
         self.types = ["map", "sat", "skl"]
-        self.lat = 55.729738
         self.lon = 37.664777
+        self.lat = 55.729738
         self.zoom = 16
         self.type = self.types[0]
 
@@ -104,6 +104,7 @@ class Main(QWidget):
         self.label.setPixmap(self.pixmap)
 
     def keyPressEvent(self, event):
+        print(self.mp.lon, self.mp.lat)
         self.mp.search_result = None
         if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
             self.mp.zoom += 1
@@ -128,8 +129,8 @@ class Main(QWidget):
     def point(self):
         if self.line.text() != '':
             place = reverse_geocode(self.line.text())["Point"]["pos"].split()
-            self.mp.lat = float(place[0])
-            self.mp.lon = float(place[1])
+            self.mp.lon = float(place[0])
+            self.mp.lat = float(place[1])
             self.mp.search_result = True
             self.new_pic()
 
