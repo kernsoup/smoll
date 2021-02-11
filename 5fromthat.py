@@ -4,8 +4,9 @@ import os
 import math
 import random
 from PyQt5.QtCore import Qt
+from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 
 
 LAT_STEP = 0.008
@@ -83,29 +84,28 @@ class MapParams(object):
         return "{0},{1}".format(self.lon, self.lat)
 
 
-class Main(QWidget):
+class Main(QMainWindow):
     def __init__(self):
         super().__init__()
+        uic.loadUi('main2.ui', self)
         self.mp = MapParams()
         self.initUi()
 
     def initUi(self):
-        self.setGeometry(300, 300, 600, 500)
-        self.label = QLabel(self)
-        self.line = QLineEdit(self)
-        self.line.move(0, 450)
-        self.find = QPushButton(self)
-        self.find.setText('Найти')
-        self.find.move(110, 450)
         self.find.clicked.connect(self.point)
+        self.emit.clicked.connect(self.delete)
         self.new_pic()
 
     def new_pic(self):
         self.pixmap = QPixmap(load_map(self.mp))
         self.label.setPixmap(self.pixmap)
 
+    def delete(self):
+        self.line.clear()
+        self.mp.search_result = None
+        self.new_pic()
+
     def keyPressEvent(self, event):
-        print(event.key())
         if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
             self.mp.zoom += 1
         elif event.key() == Qt.Key_PageDown and self.mp.zoom > 2:  # PG_DOWN
