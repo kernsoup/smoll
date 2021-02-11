@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>599</width>
-    <height>557</height>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,6 +36,11 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 209, 25);</string>
     </property>
@@ -52,6 +57,11 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 209, 25);</string>
     </property>
@@ -67,6 +77,55 @@
       <width>113</width>
       <height>20</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="address">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>450</y>
+      <width>381</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="withindex">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>490</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>с индексом</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="without">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>без индекса</string>
     </property>
    </widget>
   </widget>

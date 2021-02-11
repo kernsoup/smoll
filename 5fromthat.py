@@ -94,6 +94,10 @@ class Main(QMainWindow):
     def initUi(self):
         self.find.clicked.connect(self.point)
         self.emit.clicked.connect(self.delete)
+        self.without.clicked.connect(self.point)
+        self.withindex.clicked.connect(self.point)
+        self.without.setChecked(True)
+        self.address.setReadOnly(True)
         self.new_pic()
 
     def new_pic(self):
@@ -103,6 +107,7 @@ class Main(QMainWindow):
     def delete(self):
         self.line.clear()
         self.mp.search_result = None
+        self.address.clear()
         self.new_pic()
 
     def keyPressEvent(self, event):
@@ -127,10 +132,16 @@ class Main(QMainWindow):
 
     def point(self):
         if self.line.text() != '':
-            place = reverse_geocode(self.line.text())["Point"]["pos"].split()
+            algo = reverse_geocode(self.line.text())
+            place = algo["Point"]["pos"].split()
             self.mp.lon = self.mp.point_lon = float(place[0])
             self.mp.lat = self.mp.point_lat = float(place[1])
+            address = algo["metaDataProperty"]["GeocoderMetaData"]["Address"]
             self.mp.search_result = True
+            if self.withindex.isChecked() and "postal_code" in address.keys():
+                self.address.setPlainText(f'{address["formatted"]}, {address["postal_code"]}')
+            else:
+                self.address.setPlainText(address["formatted"])
             self.new_pic()
 
 
