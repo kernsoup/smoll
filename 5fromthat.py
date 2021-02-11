@@ -2,6 +2,7 @@ import requests
 import sys
 import os
 import math
+import random
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
@@ -14,13 +15,11 @@ coord_to_geo_y = 0.0000428
 
 
 def load_map(mp):
-    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}".format(z=mp.zoom,
-                                                                            type=mp.type)
+    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}&ll={ll}".format(ll = mp.ll(),
+                                                                                     z=mp.zoom,
+                                                                                     type=mp.type)
     if mp.search_result:
-        map_request += "&pt={0},{1},pm2rdm".format(mp.lon, mp.lat)
-    else:
-        map_request += "&ll={0},{1}".format(mp.lon, mp.lat)
-    print(map_request)
+        map_request += "&pt={0},{1},pm2rdm".format(mp.point_lon, mp.point_lat)
     response = requests.get(map_request)
     if not response:
         print("Ошибка выполнения запроса:")
@@ -71,6 +70,8 @@ class MapParams(object):
         self.types = ["map", "sat", "skl"]
         self.lon = 37.664777
         self.lat = 55.729738
+        self.point_lon = None  # координаты метки
+        self.point_lat = None
         self.zoom = 16
         self.type = self.types[0]
 
@@ -104,8 +105,7 @@ class Main(QWidget):
         self.label.setPixmap(self.pixmap)
 
     def keyPressEvent(self, event):
-        print(self.mp.lon, self.mp.lat)
-        self.mp.search_result = None
+        print(event.key())
         if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
             self.mp.zoom += 1
         elif event.key() == Qt.Key_PageDown and self.mp.zoom > 2:  # PG_DOWN
@@ -118,8 +118,7 @@ class Main(QWidget):
             self.mp.lat += LAT_STEP * math.pow(2, 15 - self.mp.zoom)
         elif event.key() == Qt.Key_Down and self.mp.lat > -85:  # DOWN_ARROW
             self.mp.lat -= LAT_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_Enter:
-            print((self.mp.types.index(self.mp.type) + 1) % 3)
+        elif event.key() == Qt.Key_F1:
             self.mp.type = self.mp.types[(self.mp.types.index(self.mp.type) + 1) % 3]
         self.new_pic()
 
@@ -129,8 +128,8 @@ class Main(QWidget):
     def point(self):
         if self.line.text() != '':
             place = reverse_geocode(self.line.text())["Point"]["pos"].split()
-            self.mp.lon = float(place[0])
-            self.mp.lat = float(place[1])
+            self.mp.lon = self.mp.point_lon = float(place[0])
+            self.mp.lat = self.mp.point_lat = float(place[1])
             self.mp.search_result = True
             self.new_pic()
 
