@@ -1,12 +1,10 @@
 import requests
 import sys
-import os
 import math
-import random
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
 LAT_STEP = 0.008
@@ -94,9 +92,7 @@ class Main(QMainWindow):
     def initUi(self):
         self.find.clicked.connect(self.point)
         self.emit.clicked.connect(self.delete)
-        self.without.clicked.connect(self.point)
         self.withindex.clicked.connect(self.point)
-        self.without.setChecked(True)
         self.address.setReadOnly(True)
         self.new_pic()
 
@@ -111,6 +107,7 @@ class Main(QMainWindow):
         self.new_pic()
 
     def keyPressEvent(self, event):
+        print(self.mp.zoom, self.mp.lon, self.mp.lat)
         if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
             self.mp.zoom += 1
         elif event.key() == Qt.Key_PageDown and self.mp.zoom > 2:  # PG_DOWN

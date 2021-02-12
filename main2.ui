@@ -92,12 +92,12 @@
      <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="withindex">
+   <widget class="QCheckBox" name="withindex">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>490</y>
-      <width>91</width>
+      <width>111</width>
       <height>17</height>
      </rect>
     </property>
@@ -107,25 +107,7 @@
      </font>
     </property>
     <property name="text">
-     <string>с индексом</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="without">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>510</y>
-      <width>101</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>без индекса</string>
+     <string>С индексом</string>
     </property>
    </widget>
   </widget>
