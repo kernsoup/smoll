@@ -14,7 +14,7 @@ coord_to_geo_y = 0.0000428
 
 
 def load_map(mp):
-    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}&ll={ll}".format(ll = mp.ll(),
+    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}&ll={ll}".format(ll=mp.ll(),
                                                                                      z=mp.zoom,
                                                                                      type=mp.type)
     if mp.search_result:
@@ -67,11 +67,11 @@ class SearchResult(object):
 class MapParams(object):
     def __init__(self):
         self.types = ["map", "sat", "skl"]
-        self.lon = 37.664777
-        self.lat = 55.729738
+        self.lon = 37.617777
+        self.lat = 55.751738
         self.point_lon = None  # координаты метки
         self.point_lat = None
-        self.zoom = 16
+        self.zoom = 15
         self.type = self.types[0]
 
         self.search_result = None
@@ -107,7 +107,6 @@ class Main(QMainWindow):
         self.new_pic()
 
     def keyPressEvent(self, event):
-        print(self.mp.zoom, self.mp.lon, self.mp.lat)
         if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
             self.mp.zoom += 1
         elif event.key() == Qt.Key_PageDown and self.mp.zoom > 2:  # PG_DOWN
@@ -126,13 +125,26 @@ class Main(QMainWindow):
 
     def mousePressEvent(self, event):
         self.line.clearFocus()
+        if event.button() == Qt.LeftButton and event.y() < 468:
+            x, y = event.x() - 300, event.y() - 243
+            self.mp.point_lon = self.mp.lon + coord_to_geo_x * x * math.pow(2, 15 - self.mp.zoom)
+            self.mp.point_lat = self.mp.lat - coord_to_geo_y * y * math.pow(2, 14 - self.mp.zoom)
+            self.point(f'{self.mp.point_lon} {self.mp.point_lat}')
+            self.new_pic()
 
-    def point(self):
-        if self.line.text() != '':
-            algo = reverse_geocode(self.line.text())
-            place = algo["Point"]["pos"].split()
-            self.mp.lon = self.mp.point_lon = float(place[0])
-            self.mp.lat = self.mp.point_lat = float(place[1])
+
+    def point(self, *args):
+        if self.line.text() != '' or type(args[0]) == str or (self.sender().text() == 'С индексом' and \
+                self.address.toPlainText() != ''):
+            if type(args[0]) is not bool:
+                algo = reverse_geocode(args[0])
+            elif self.sender().text() == 'С индексом':
+                algo = reverse_geocode(f'{self.mp.point_lon} {self.mp.point_lat}')
+            else:
+                algo = reverse_geocode(self.line.text())
+                place = algo["Point"]["pos"].split()
+                self.mp.lon = self.mp.point_lon = float(place[0])
+                self.mp.lat = self.mp.point_lat = float(place[1])
             address = algo["metaDataProperty"]["GeocoderMetaData"]["Address"]
             self.mp.search_result = True
             if self.withindex.isChecked() and "postal_code" in address.keys():
