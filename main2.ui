@@ -45,7 +45,7 @@
      <string notr="true">background-color: rgb(255, 209, 25);</string>
     </property>
     <property name="text">
-     <string>Найти</string>
+     <string>Find</string>
     </property>
    </widget>
    <widget class="QPushButton" name="emit">
@@ -66,7 +66,7 @@
      <string notr="true">background-color: rgb(255, 209, 25);</string>
     </property>
     <property name="text">
-     <string>Сброс</string>
+     <string>Reset</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="line">
@@ -107,7 +107,7 @@
      </font>
     </property>
     <property name="text">
-     <string>С индексом</string>
+     <string>With postal code</string>
     </property>
    </widget>
   </widget>
