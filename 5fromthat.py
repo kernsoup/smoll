@@ -14,7 +14,7 @@ coord_to_geo_y = 0.0000428
 
 
 def load_map(mp):
-    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}&ll={ll}".format(ll=mp.ll(),
+    map_request = "http://static-maps.yandex.ru/1.x/?&z={z}&l={type}&ll={ll}&lang=en_US".format(ll=mp.ll(),
                                                                                      z=mp.zoom,
                                                                                      type=mp.type)
     if mp.search_result:
@@ -38,7 +38,7 @@ def load_map(mp):
 
 
 def reverse_geocode(ll):
-    geocoder_request_template = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={ll}&format=json"
+    geocoder_request_template = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={ll}&format=json&lang=en_US"
     geocoder_request = geocoder_request_template.format(**locals())
     response = requests.get(geocoder_request)
 
@@ -67,8 +67,8 @@ class SearchResult(object):
 class MapParams(object):
     def __init__(self):
         self.types = ["map", "sat", "skl"]
-        self.lon = 37.617777
-        self.lat = 55.751738
+        self.lon = 23.808347
+        self.lat = 61.503606
         self.point_lon = None  # координаты метки
         self.point_lat = None
         self.zoom = 15
@@ -107,23 +107,25 @@ class Main(QMainWindow):
         self.new_pic()
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_PageUp and self.mp.zoom < 19:
+        print("nya")
+        if event.key() == Qt.Key_Z and self.mp.zoom < 19:
             self.mp.zoom += 1
-        elif event.key() == Qt.Key_PageDown and self.mp.zoom > 2:  # PG_DOWN
+        elif event.key() == Qt.Key_X and self.mp.zoom > 2:  
             self.mp.zoom -= 1
-        elif event.key() == Qt.Key_Left:  # LEFT_ARROW
+        elif event.key() == Qt.Key_A:  
             self.mp.lon -= LON_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_Right:  # RIGHT_ARROW
+        elif event.key() == Qt.Key_D:  
             self.mp.lon += LON_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_Up and self.mp.lat < 85:  # UP_ARROW
+        elif event.key() == Qt.Key_W and self.mp.lat < 85:  
             self.mp.lat += LAT_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_Down and self.mp.lat > -85:  # DOWN_ARROW
+        elif event.key() == Qt.Key_S and self.mp.lat > -85:  
             self.mp.lat -= LAT_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_F1:
+        elif event.key() == Qt.Key_R:
             self.mp.type = self.mp.types[(self.mp.types.index(self.mp.type) + 1) % 3]
         self.new_pic()
 
     def mousePressEvent(self, event):
+        print("uwu")
         self.line.clearFocus()
         if event.button() == Qt.LeftButton and event.y() < 468:
             x, y = event.x() - 300, event.y() - 243
@@ -134,11 +136,11 @@ class Main(QMainWindow):
 
 
     def point(self, *args):
-        if self.line.text() != '' or type(args[0]) == str or (self.sender().text() == 'С индексом' and \
+        if self.line.text() != '' or type(args[0]) == str or (self.sender().text() == 'With postal code' and \
                 self.address.toPlainText() != ''):
             if type(args[0]) is not bool:
                 algo = reverse_geocode(args[0])
-            elif self.sender().text() == 'С индексом':
+            elif self.sender().text() == 'With postal code':
                 algo = reverse_geocode(f'{self.mp.point_lon} {self.mp.point_lat}')
             else:
                 algo = reverse_geocode(self.line.text())
