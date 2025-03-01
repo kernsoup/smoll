@@ -5,10 +5,12 @@ from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from dotenv import dotenv_values
 
 
 LAT_STEP = 0.008
 LON_STEP = 0.008
+API_KEY = dotenv_values(".env")["API_KEY"]
 coord_to_geo_x = 0.0000428
 coord_to_geo_y = 0.0000428
 
@@ -38,7 +40,7 @@ def load_map(mp):
 
 
 def reverse_geocode(ll):
-    geocoder_request_template = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={ll}&format=json&lang=en_US"
+    geocoder_request_template = "http://geocode-maps.yandex.ru/1.x/?apikey=" + API_KEY + "&geocode={ll}&format=json&lang=en_US"
     geocoder_request = geocoder_request_template.format(**locals())
     response = requests.get(geocoder_request)
 
@@ -110,22 +112,21 @@ class Main(QMainWindow):
         print("nya")
         if event.key() == Qt.Key_Z and self.mp.zoom < 19:
             self.mp.zoom += 1
-        elif event.key() == Qt.Key_X and self.mp.zoom > 2:  
+        elif event.key() == Qt.Key_X and self.mp.zoom > 2:
             self.mp.zoom -= 1
-        elif event.key() == Qt.Key_A:  
+        elif event.key() == Qt.Key_A:
             self.mp.lon -= LON_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_D:  
+        elif event.key() == Qt.Key_D:
             self.mp.lon += LON_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_W and self.mp.lat < 85:  
+        elif event.key() == Qt.Key_W and self.mp.lat < 85:
             self.mp.lat += LAT_STEP * math.pow(2, 15 - self.mp.zoom)
-        elif event.key() == Qt.Key_S and self.mp.lat > -85:  
+        elif event.key() == Qt.Key_S and self.mp.lat > -85:
             self.mp.lat -= LAT_STEP * math.pow(2, 15 - self.mp.zoom)
         elif event.key() == Qt.Key_R:
             self.mp.type = self.mp.types[(self.mp.types.index(self.mp.type) + 1) % 3]
         self.new_pic()
 
     def mousePressEvent(self, event):
-        print("uwu")
         self.line.clearFocus()
         if event.button() == Qt.LeftButton and event.y() < 468:
             x, y = event.x() - 300, event.y() - 243
